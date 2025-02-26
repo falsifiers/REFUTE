@@ -1,0 +1,128 @@
+You are an expert at finding errors in code. You will be given:
+- a problem statement
+- input and output formats
+- example input and output
+- additional notes (optional)
+- an incorrect code
+
+Your job is to find a valid input in the expected format, satisfying all input constraints, on which the code's output is incorrect according to the problem's specification.
+
+Write a program to print this failing test-case. Provide this to me in the exact XML format I show below. Do not include anything other than this XML in your output.
+
+```
+<reason>
+[Your concise reasoning here]
+</reason>
+<action>
+<name>print_fail_case</name>
+<code>
+[code to print failing test-case]
+</code>
+<lang>Python 3</lang>
+</action>
+```
+
+# Example
+## Statement
+
+You have been offered to play a game. In this game, there are $$n$$ possible outcomes, and for each of them, you must bet a certain integer amount of coins. In the event that the $$i$$-th outcome turns out to be winning, you will receive back the amount of coins equal to your bet on that outcome, multiplied by $$k_i$$. Note that exactly one of the $$n$$ outcomes will be winning. Your task is to determine how to distribute the coins in such a way that you will come out ahead in the event of any winning outcome. More formally, the total amount of coins you bet on all outcomes must be strictly less than the number of coins received back for each possible winning outcome.
+
+Time Limit: 2000ms
+
+Memory Limit: 256 megabytes
+
+## Input Format
+
+Each test consists of multiple test cases. The first line contains a single integer $$t$$ ($$1 \le t \le 10^4$$) — the number of test cases. The description of the test cases follows.
+The first line of each test case contains a single integer $$n$$ ($$1 \le n \le 50$$) — the number of outcomes.
+The second line of each test case contains $$n$$ integers $$k_1,k_2,\ldots,k_n$$ ($$2 \le k_i \le 20$$) — the multiplier for the amount of coins if the $$i$$-th outcome turns out to be winning.
+It is guaranteed that the sum of $$n$$ over all test cases does not exceed $$2 \cdot 10^5$$.
+
+## Output Format
+
+For each test case, output $$-1$$ if there is no way to distribute the coins as required. Otherwise, output $$n$$ integers $$x_1, x_2,\ldots, x_n$$ ($$1 \le x_i \le 10^{9}$$) — your bets on the outcomes.
+It can be shown that if a solution exists, there is always a solution that satisfies these constraints.
+If there are multiple suitable solutions, output any of them.
+
+## Example Input
+
+```
+6
+3
+3 2 7
+2
+3 3
+5
+5 5 5 5 5
+6
+7 9 3 17 9 13
+3
+6 3 2
+5
+9 4 6 8 3
+
+```
+
+## Example Output
+
+```
+27 41 12
+1 1
+-1
+1989 1547 4641 819 1547 1071
+-1
+8 18 12 9 24
+
+```
+
+## Note
+
+In the first test case, the coins can be distributed as follows: $$27$$ coins on the first outcome, $$41$$ coins on the second outcome, $$12$$ coins on the third outcome. Then the total amount of coins bet on all outcomes is $$27 + 41 + 12 = 80$$ coins. If the first outcome turns out to be winning, you will receive back $$3 \cdot 27 = 81$$ coins, if the second outcome turns out to be winning, you will receive back $$2 \cdot 41 = 82$$ coins, if the third outcome turns out to be winning, you will receive back $$7 \cdot 12 = 84$$ coins. All these values are strictly greater than $$80$$.
+In the second test case, one way is to bet one coin on each of the outcomes.
+
+## Code
+
+```
+from bisect import bisect_left, bisect_right
+from itertools import combinations, permutations, product
+from collections import defaultdict, Counter, deque
+from heapq import heappush, heappop
+from math import gcd, isqrt, lcm
+from random import randint, shuffle
+import sys
+
+lol = lambda func=int: list(map(func, sys.stdin.readline().split()))
+t = lol()[0]
+for _ in range(t):
+    n = lol()[0]
+    a = lol()
+    b = [10**7//i for i in a]
+    sb = sum(b)
+    st = float("inf")
+    for x, y in zip(a, b):
+        st = min(st, x*y)
+    # print(st, sb)
+    if st > sb:
+        print(*b)
+    else:
+        print(-1)
+
+```
+
+## You would respond with:
+
+```
+<reason>
+The code is logically correct. If the total number of coins being placed across all outcomes is $S$, then for every outcome $i$, we need to spend more than $\frac{S}{k_i}$. Spending more than this amount is not useful because it only increases the total sum and the threshold values for every outcome. Thus the final condition is just that $\sum \frac{1}{k_i} < 1$. If this is true, we can pick a suitable $S$ and split it accordingly. The code tries to do this, but the choice of $S$ (10**7) isn't suitable -- what if the sum of $\frac{1}{k_i}$ is very close to 1?  Here's a testcase to exploit this.
+</reason>
+<action>
+<name>print_fail_case</name>
+<code>
+arr = [11, 11, 11, 11, 13, 14, 15, 18, 19, 19, 19, 19, 19, 19, 20]
+print(1)
+print(len(arr))
+print(" ".join(arr))
+</code>
+<lang>Python 3</lang>
+</action>
+```

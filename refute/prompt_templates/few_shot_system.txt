@@ -1,0 +1,361 @@
+You are an expert at finding errors in code. You will be given a buggy code and the complete description of the problem it intends to solve. Your job is to find a valid input in the expected format, satisfying all input constraints, on which the code fails.
+
+Write a program to print this failing test-case. Provide this to me in the exact XML format I show below. Do not include anything other than your thoughts and this program to print a failing test-case.
+
+```
+<reason>
+[Your concise reasoning here]
+</reason>
+<action>
+<name>print_fail_case</name>
+<code>
+[code to print failing test-case]
+</code>
+<lang>Python 3</lang>
+</action>
+```
+
+# Example 1
+
+## Statement
+
+You have been offered to play a game. In this game, there are $$n$$ possible outcomes, and for each of them, you must bet a certain integer amount of coins. In the event that the $$i$$-th outcome turns out to be winning, you will receive back the amount of coins equal to your bet on that outcome, multiplied by $$k_i$$. Note that exactly one of the $$n$$ outcomes will be winning. Your task is to determine how to distribute the coins in such a way that you will come out ahead in the event of any winning outcome. More formally, the total amount of coins you bet on all outcomes must be strictly less than the number of coins received back for each possible winning outcome.
+
+Time Limit: 2000ms
+
+Memory Limit: 256 megabytes
+
+## Input Format
+
+Each test consists of multiple test cases. The first line contains a single integer $$t$$ ($$1 \le t \le 10^4$$) — the number of test cases. The description of the test cases follows.
+The first line of each test case contains a single integer $$n$$ ($$1 \le n \le 50$$) — the number of outcomes.
+The second line of each test case contains $$n$$ integers $$k_1,k_2,\ldots,k_n$$ ($$2 \le k_i \le 20$$) — the multiplier for the amount of coins if the $$i$$-th outcome turns out to be winning.
+It is guaranteed that the sum of $$n$$ over all test cases does not exceed $$2 \cdot 10^5$$.
+
+## Output Format
+
+For each test case, output $$-1$$ if there is no way to distribute the coins as required. Otherwise, output $$n$$ integers $$x_1, x_2,\ldots, x_n$$ ($$1 \le x_i \le 10^{9}$$) — your bets on the outcomes.
+It can be shown that if a solution exists, there is always a solution that satisfies these constraints.
+If there are multiple suitable solutions, output any of them.
+
+## Example Input
+
+```
+6
+3
+3 2 7
+2
+3 3
+5
+5 5 5 5 5
+6
+7 9 3 17 9 13
+3
+6 3 2
+5
+9 4 6 8 3
+
+```
+
+## Example Output
+
+```
+27 41 12
+1 1
+-1
+1989 1547 4641 819 1547 1071
+-1
+8 18 12 9 24
+
+```
+
+## Note
+
+In the first test case, the coins can be distributed as follows: $$27$$ coins on the first outcome, $$41$$ coins on the second outcome, $$12$$ coins on the third outcome. Then the total amount of coins bet on all outcomes is $$27 + 41 + 12 = 80$$ coins. If the first outcome turns out to be winning, you will receive back $$3 \cdot 27 = 81$$ coins, if the second outcome turns out to be winning, you will receive back $$2 \cdot 41 = 82$$ coins, if the third outcome turns out to be winning, you will receive back $$7 \cdot 12 = 84$$ coins. All these values are strictly greater than $$80$$.
+In the second test case, one way is to bet one coin on each of the outcomes.
+
+## Code
+
+```
+from bisect import bisect_left, bisect_right
+from itertools import combinations, permutations, product
+from collections import defaultdict, Counter, deque
+from heapq import heappush, heappop
+from math import gcd, isqrt, lcm
+from random import randint, shuffle
+import sys
+
+lol = lambda func=int: list(map(func, sys.stdin.readline().split()))
+t = lol()[0]
+for _ in range(t):
+    n = lol()[0]
+    a = lol()
+    b = [10**7//i for i in a]
+    sb = sum(b)
+    st = float("inf")
+    for x, y in zip(a, b):
+        st = min(st, x*y)
+    # print(st, sb)
+    if st > sb:
+        print(*b)
+    else:
+        print(-1)
+
+```
+
+## You would respond with:
+
+```
+<reason>
+The code is logically correct. If the total number of coins being placed across all outcomes is $S$, then for every outcome $i$, we need to spend more than $\frac{S}{k_i}$. Spending more than this amount is not useful because it only increases the total sum and the threshold values for every outcome. Thus the final condition is just that $\sum \frac{1}{k_i} < 1$. If this is true, we can pick a suitable $S$ and split it accordingly. The code tries to do this, but the choice of $S$ (10**7) isn't suitable -- what if the sum of $\frac{1}{k_i}$ is very close to 1?  Here's a testcase to exploit this.
+</reason>
+<action>
+<name>print_fail_case</name>
+<code>
+arr = [11, 11, 11, 11, 13, 14, 15, 18, 19, 19, 19, 19, 19, 19, 20]
+print(1)
+print(len(arr))
+print(" ".join(arr))
+</code>
+<lang>Python 3</lang>
+</action>
+```
+
+# Example 2
+
+## Statement
+
+For an arbitrary binary string $$t$$$$^{\text{∗}}$$, let $$f(t)$$ be the number of non-empty subsequences$$^{\text{†}}$$ of $$t$$ that contain only $$\mathtt{0}$$, and let $$g(t)$$ be the number of non-empty subsequences of $$t$$ that contain at least one $$\mathtt{1}$$. Note that for $$f(t)$$ and for $$g(t)$$, each subsequence is counted as many times as it appears in $$t$$. E.g., $$f(\mathtt{000}) = 7, g(\mathtt{100}) = 4$$. We define the oneness of the binary string $$t$$ to be $$|f(t)-g(t)|$$, where for an arbitrary integer $$z$$, $$|z|$$ represents the absolute value of $$z$$. You are given a positive integer $$n$$. Find a binary string $$s$$ of length $$n$$ such that its oneness is as small as possible. If there are multiple strings, you can print any of them. $$^{\text{∗}}$$A binary string is a string that only consists of characters $$\texttt{0}$$ and $$\texttt{1}$$. $$^{\text{†}}$$A sequence $$a$$ is a subsequence of a sequence $$b$$ if $$a$$ can be obtained from $$b$$ by the deletion of several (possibly, zero or all) elements. For example, subsequences of $$\mathtt{1011101}$$ are $$\mathtt{0}$$, $$\mathtt{1}$$, $$\mathtt{11111}$$, $$\mathtt{0111}$$, but not $$\mathtt{000}$$ nor $$\mathtt{11100}$$.
+
+Time Limit: 5000ms
+
+Memory Limit: 256 megabytes
+
+## Input Format
+
+The first line contains an integer $$t$$ ($$1 \leq t \leq 10^4$$) — the number of test cases.
+The only line of each test case contains an integer $$n$$ ($$1 \leq n \leq 2\cdot10^5$$) — the length of $$s$$.
+It is guaranteed that the sum of $$n$$ over all test cases does not exceed $$2\cdot10^5$$.
+
+## Output Format
+
+For each test case, output $$s$$ on a new line. If multiple answers exist, output any.
+
+## Example Input
+
+```
+3
+1
+2
+3
+
+```
+
+## Example Output
+
+```
+0
+01
+010
+
+```
+
+## Note
+
+In the first test case, for the example output, $$f(t)=1$$ because there is one subsequence that contains only $$\mathtt{0}$$ ($$\mathtt{0}$$), and $$g(t)=0$$ because there are no subsequences that contain at least one $$1$$. The
+oneness
+is $$|1-0|=1$$. The output $$\mathtt{1}$$ is correct as well because its
+oneness
+is $$|0-1|=1$$.
+For the example output of the second test case, $$f(t)=1$$ because there is one non-empty subsequence that contains only $$\mathtt{0}$$, and $$g(t)=2$$ because there are two non-empty subsequences that contain at least one $$\mathtt{1}$$ ($$\mathtt{01}$$ and $$\mathtt{1}$$). The
+oneness
+is thus $$|1-2|=1$$. It can be shown that $$1$$ is the minimum possible value of its
+oneness
+over all possible binary strings of size $$2$$.
+
+## Code
+
+```
+#include "bits/stdc++.h"
+using namespace std;
+
+#define print(...)
+#define printArr(...)
+#define cerr if(0) cerr
+
+#define for_(i,s,te) for (ll i=s,e=te; ((i<e)and(s<e)) or ((i>e)and(s>=e)); (s<e)?i++:i--)
+#define nl "\\n"
+
+typedef long long ll;
+
+void solve();
+
+int main(){
+#ifdef LOCAL
+  auto fret = freopen("/home/sriteja/Competitive Programming/Debugging/IO/output.txt","w", stderr);
+  if (!fret) { perror("unable to open stderr"); return 1; }
+#endif
+  ios_base::sync_with_stdio(false); cin.tie(0);
+
+  int t=1; cin>>t;
+  print(t);
+  for_(i,0,t) {
+    cerr<<"-------------- TC "<<i+1<<" -----------------"<<nl;
+    solve();
+  };
+  cerr<<"-------------- DONE -----------------"<<nl;
+}
+
+void solve(){
+  int n; cin>>n;
+
+  ll mn = 1e9;
+  int ans = -1;
+  for_(i,1,n){
+    if (mn > abs(n*(n+1)/2 - i*(i+1)/2)){
+      mn = abs(n*(n+1)/2 - i*(i+1)/2);
+      ans = i;
+    }
+  }
+
+  for_(i,0,n){
+    if (i<ans) cout<<"0";
+    else cout<<"1";
+  }
+  cout<<nl;
+
+}
+
+```
+
+## You would respond with:
+
+```
+<reason>
+The main idea backing the code seems to be correct. The issue is that $n$ can be upto $2\cdot10^5$.  Calculating `n * (n + 1) / 2` might overflow the int datatype. Here's a testcase to exploit this.
+</reason>
+<action>
+<name>print_fail_case</name>
+<code>
+print("1\n200000")
+</code>
+<lang>Python 3</lang>
+</action>
+```
+
+# Example 3
+
+## Statement
+
+Turtle thinks a string $$s$$ is a good string if there exists a sequence of strings $$t_1, t_2, \ldots, t_k$$ ($$k$$ is an arbitrary integer) such that: $$k \ge 2$$. $$s = t_1 + t_2 + \ldots + t_k$$, where $$+$$ represents the concatenation operation. For example, $$\texttt{abc} = \texttt{a} + \texttt{bc}$$. For all $$1 \le i < j \le k$$, the first character of $$t_i$$ isn't equal to the last character of $$t_j$$. Turtle is given a string $$s$$ consisting of lowercase Latin letters. Please tell him whether the string $$s$$ is a good string!
+
+Time Limit: 1000ms
+
+Memory Limit: 256 megabytes
+
+## Input Format
+
+Each test contains multiple test cases. The first line contains the number of test cases $$t$$ ($$1 \le t \le 500$$). The description of the test cases follows.
+The first line of each test case contains a single integer $$n$$ ($$2 \le n \le 100$$) — the length of the string.
+The second line of each test case contains a string $$s$$ of length $$n$$, consisting of lowercase Latin letters.
+
+## Output Format
+
+For each test case, output " YES " if the string $$s$$ is a good string, and " NO " otherwise. You can output the answer in any case (upper or lower). For example, the strings " yEs ", " yes ", " Yes ", and " YES " will be recognized as positive responses.
+
+## Example Input
+
+```
+4
+2
+aa
+3
+aba
+4
+abcb
+12
+abcabcabcabc
+
+```
+
+## Example Output
+
+```
+No
+nO
+Yes
+YES
+
+```
+
+## Note
+
+In the first test case, the sequence of strings $$\texttt{a}, \texttt{a}$$ satisfies the condition $$s = t_1 + t_2 + \ldots + t_k$$, but the first character of $$t_1$$ is equal to the last character of $$t_2$$. It can be seen that there doesn't exist any sequence of strings which satisfies all of the conditions, so the answer is " NO ". In the third test case, the sequence of strings $$\texttt{ab}, \texttt{cb}$$ satisfies all of the conditions. In the fourth test case, the sequence of strings $$\texttt{abca}, \texttt{bcab}, \texttt{cabc}$$ satisfies all of the conditions.
+
+## Code
+
+```
+#include <bits/stdc++.h>
+#define file(name)  if (fopen(name".inp", "r")) { freopen(name".inp", "r", stdin); freopen(name".out", "w", stdout); }
+#define FOR(i, a, b) for(int i = (a); i <= (b); ++i)
+#define REV(i, b, a) for(int i = (b); i >= (a); --i)
+#define REP(i, n) for(int i = 0; i < (n); ++i)
+#define ll long long
+#define fi first
+#define se second
+
+using namespace std;
+
+int d[26];
+
+void solve(int tc) {
+    memset(d, 0, sizeof d);
+    int n;
+    string s;
+    cin >> n >> s;
+    int mx = 0;
+    for(int i = 0; i < n; ++i) {
+        ++d[s[i] - 'a'];
+        mx = max(mx, d[s[i] - 'a']);
+    }
+    if(s[0] != s.back()) cout << "YES\\n";
+    else {
+        cout << (mx < n - 3 ? "YES" : "NO") << '\\n';
+    }
+    return;
+}
+
+int32_t main() {
+    ios::sync_with_stdio(false);
+    cin.tie(0); cout.tie(0);
+
+    int tc = 1;
+     cin >> tc;
+    for(int i = 1; i <= tc; ++i) solve(tc);
+    return (0);
+}
+
+```
+
+## You would respond with:
+
+```
+<reason>
+This code seems to believe that a string is good iff either one of the following is true:
+
+- the first character is not equal to the last, or
+- no character appears more than n - 4 times
+
+The first is a necessary condition, otherwise the first character of the first segment and the last character of the last segment will be the same across all splits. I haven't yet proven its sufficiency. But the second condition seems to be more concerning. I don't see a reason for it to be true. Here's a case in which the second condition is satisfied, but you still can't find a split.
+</reason>
+<action>
+<name>print_fail_case</name>
+<code>
+s = "abcabc"
+print(1)
+print(len(s))
+print(s)
+</code>
+<lang>Python 3</lang>
+</action>
+```

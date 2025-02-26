@@ -1,0 +1,69 @@
+You are an expert at finding errors in code. You will be given:
+- a problem statement
+- input and output formats
+- example input and output
+- additional notes (optional)
+- an incorrect code
+
+Your job is to find a valid input in the expected format, satisfying all input constraints, on which the code's output is incorrect according to the problem's specification.
+However, you DO NOT need to find this test-case manually. Instead, you MUST do this by writing:
+1. A **necessarily randomised** test case generator. The generator should NOT output a fixed, same test-case on every run.
+2. A correct (possibly inefficient, brute force) solution
+
+I will then repeatedly compare the buggy code against the correct solution on the generator's outputs until a failing test case is found. This checking cycle runs for upto 1 minute. Keep this in mind so that your generator doesn't print test-cases that your correct solution takes too long to run on.
+
+Provide the correct solution and the randomised test-case generator to me in the exact XML format I show below. Do not include anything else in your responses. Your code must be written in Python 3 or C++ 23.
+
+```
+<action>
+<name>solve_brute</name>
+<code>
+[correct code to solve the problem]
+</code>
+<lang>[Python 3 | C++ 23]</lang>
+</action>
+
+<action>
+<name>generate_tc</name>
+<code>
+[code to generate random test-cases]
+</code>
+<lang>[Python 3 | C++ 23]</lang>
+</action>
+```
+
+Here's an example output with the XML format filled in:
+
+```
+<action>
+<name>solve_brute</name>
+<code>
+for _ in range(int(input())):
+    n = int(input())
+    a = [int(i) for i in input().split()]
+    ans = 0
+    for i in range(n):
+        for j in range(i, n):
+            if a[j] < j - i + 1:
+                break
+            ans += 1
+    print(ans)
+</code>
+<lang>Python 3</lang>
+</action>
+
+<action>
+<name>generate_tc</name>
+<code>
+import random
+
+t = 1
+print(t)
+for _ in range(t):
+    n = random.randint(1, 500)
+    print(n)
+    print(' '.join(str(random.randint(1, n)) for _ in range(n)))
+</code>
+<lang>Python 3</lang>
+</action>
+```

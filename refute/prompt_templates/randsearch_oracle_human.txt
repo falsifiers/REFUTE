@@ -1,0 +1,1 @@
+You are now given a problem description, a buggy code, and a correct code. Write a testcase generator script in the exact XML format mentioned earlier to find where the buggy code fails. Don't output anything else.
