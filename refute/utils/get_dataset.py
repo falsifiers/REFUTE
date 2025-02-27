@@ -1,6 +1,4 @@
-from datasets import load_dataset, load_from_disk
-import refute
-import os
+from datasets import load_dataset
 
 
 def get_dataset():
