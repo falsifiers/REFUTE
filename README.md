@@ -3,9 +3,9 @@
 _Official repository for the paper "Can Language Models Falsify? Evaluating Algorithmic Reasoning with Counterexample
 Creation"._
 <p align="center">
+    <a href="https://arxiv.org/abs/2502.19414"><strong>Paper</strong></a> &nbsp;&nbsp;|&nbsp;&nbsp;
     <a href="https://falsifiers.github.io/"><strong>Home Page</strong></a> &nbsp;&nbsp;|&nbsp;&nbsp;
-    <a href="https://huggingface.co/datasets/bethgelab/REFUTE"><strong>🤗 Dataset</strong></a> &nbsp;&nbsp;|&nbsp;&nbsp;
-    <a href="https://arxiv.org/abs/"><strong>Paper</strong></a>
+    <a href="https://huggingface.co/datasets/bethgelab/REFUTE"><strong>🤗 Dataset</strong></a>
 </p>
 
 REFUTE evaluates whether language models can reason about when code might fail.
