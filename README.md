@@ -111,22 +111,10 @@ using CLI help.
 ## Citation
 
 ```bibtex
-@article{,
-  title={},
-  author={},
-  journal={},
+@article{sinha2025falsify,
+  title={Can Language Models Falsify? Evaluating Algorithmic Reasoning with Counterexample Creation},
+  author={Sinha, Shiven and Goel, Shashwat and Kumaraguru, Ponnurangam and Geiping, Jonas and Bethge, Matthias and Prabhu, Ameya},
+  journal={arXiv preprint arXiv:2502.19414},
   year={2025}
 }
 ```
-
-[//]: # (- Explain flags)
-
-[//]: # (- Mention ./tmp gets created)
-
-[//]: # (- Mention .env file)
-
-[//]: # (- Mention anti-virus?)
-
-[//]: # (- Mention language parser from utils?)
-
-[//]: # (- List of supported models for generation &#40;or actually mention that anything from openrouter is allowed&#41;)
